@@ -7,7 +7,7 @@
 ###############################################
 # To use: 
 # wget https://raw.github.com/messick/install-redis-amazon-linux-centos/master/redis-install-script.sh
-# chmod 777 redis-install-script.sh
+# chmod +x redis-install-script.sh
 # ./redis-install-script.sh
 ###############################################
 echo "*****************************************"
