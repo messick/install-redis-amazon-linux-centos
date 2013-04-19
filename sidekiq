@@ -79,6 +79,7 @@ case "$1" in
         ;;
     restart)
         stop
+        sleep 15 #let 'stop' finish
         start
         ;;
     status)
