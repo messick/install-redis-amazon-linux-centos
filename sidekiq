@@ -23,7 +23,7 @@ APP_ENV="production"
 BUNDLE="/usr/local/rvm/bin/ext_1.9.3_bundle"
 USER="deployer"
 
-START_CMD="sudo -u $USER $BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
+START_CMD="$BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
 RETVAL=0
 
 
