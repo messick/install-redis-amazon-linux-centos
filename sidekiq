@@ -42,7 +42,7 @@ start() {
 
     #Make sure of user:group of log/pid
     chown $USER:staff $LOG_FILE
-    chown $USER:staff $LOCK_FILE
+    chown $USER:staff $PID_FILE
 
     return $RETVAL
   else
@@ -58,7 +58,7 @@ stop() {
     SIG="INT"
     kill -$SIG `cat  $PID_FILE`
     RETVAL=$?
-    [ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+    [ $RETVAL -eq 0 ]
     return $RETVAL
 }
 
@@ -76,11 +76,6 @@ case "$1" in
         ;;
     stop)
         stop
-        ;;
-    restart)
-        stop
-        sleep 15 #let 'stop' finish
-        start
         ;;
     status)
         status
