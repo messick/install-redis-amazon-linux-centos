@@ -35,12 +35,12 @@ start() {
     cd $APP_DIR
     echo "Starting $SIDEKIQ message processor .. "
     $START_CMD >> $LOG_FILE 2>&1 &
-    chown -R developer:staff $APP_DIR/log
+    chown -R deployer:staff $APP_DIR/log
     RETVAL=$?
     #Sleeping for 8 seconds for process to be precisely visible in process table - See status ()
     sleep 8
     [ $RETVAL -eq 0 ] && touch $LOCK_FILE
-    chown developer:staff $LOCK_FILE
+    chown deployer:staff $LOCK_FILE
     return $RETVAL
   else
     echo "$SIDEKIQ message processor is already running .. "
