@@ -23,7 +23,7 @@ APP_ENV="production"
 BUNDLE="bundle"
 USER="deployer"
 
-START_CMD="sudo -u cat $BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
+START_CMD="sudo -u $USER $BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
 RETVAL=0
 
 
