@@ -15,7 +15,6 @@ APP="beyondalpha"
 APP_DIR="/home/deployer/apps/beyondalpha/current"
 APP_CONFIG="${APP_DIR}/config"
 LOG_FILE="$APP_DIR/log/sidekiq.log"
-LOCK_FILE="$APP_DIR/tmp/${APP}-lock"
 PID_FILE="$APP_DIR/tmp/pids/sidekiq.pid"
 GEMFILE="$APP_DIR/Gemfile"
 SIDEKIQ="sidekiq"
@@ -38,7 +37,7 @@ start() {
     RETVAL=$?
     #Sleeping for 8 seconds for process to be precisely visible in process table - See status ()
     sleep 8
-    [ $RETVAL -eq 0 ] && touch $LOCK_FILE
+    [ $RETVAL -eq 0 ]
 
     #Make sure of user:group of log/pid
     chown $USER:staff $LOG_FILE
