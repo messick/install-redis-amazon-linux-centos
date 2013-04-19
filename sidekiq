@@ -15,7 +15,7 @@ APP="beyondalpha"
 APP_DIR="/home/deployer/apps/beyondalpha/current"
 APP_CONFIG="${APP_DIR}/config"
 LOG_FILE="$APP_DIR/log/sidekiq.log"
-LOCK_FILE="$APP_DIR/${APP}-lock"
+LOCK_FILE="$APP_DIR/tmp/${APP}-lock"
 PID_FILE="$APP_DIR/tmp/pids/sidekiq.pid"
 GEMFILE="$APP_DIR/Gemfile"
 SIDEKIQ="sidekiq"
@@ -35,10 +35,12 @@ start() {
     cd $APP_DIR
     echo "Starting $SIDEKIQ message processor .. "
     $START_CMD >> $LOG_FILE 2>&1 &
+    chown -R developer:staff $APP_DIR/log
     RETVAL=$?
     #Sleeping for 8 seconds for process to be precisely visible in process table - See status ()
     sleep 8
     [ $RETVAL -eq 0 ] && touch $LOCK_FILE
+    chown developer:staff $LOCK_FILE
     return $RETVAL
   else
     echo "$SIDEKIQ message processor is already running .. "
