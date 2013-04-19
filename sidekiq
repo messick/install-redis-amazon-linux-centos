@@ -23,7 +23,7 @@ APP_ENV="production"
 BUNDLE="/usr/local/rvm/bin/ext_1.9.3_bundle"
 USER="deployer"
 
-START_CMD="$BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
+START_CMD="sudo -u $USER $BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
 RETVAL=0
 
 
@@ -35,12 +35,15 @@ start() {
     cd $APP_DIR
     echo "Starting $SIDEKIQ message processor .. "
     $START_CMD >> $LOG_FILE 2>&1 &
-    chown -R deployer:staff $APP_DIR/log
     RETVAL=$?
     #Sleeping for 8 seconds for process to be precisely visible in process table - See status ()
     sleep 8
     [ $RETVAL -eq 0 ] && touch $LOCK_FILE
-    chown deployer:staff $LOCK_FILE
+
+    #Make sure of user:group of log/pid
+    chown $USER:staff $LOG_FILE
+    chown $USER:staff $LOCK_FILE
+
     return $RETVAL
   else
     echo "$SIDEKIQ message processor is already running .. "
