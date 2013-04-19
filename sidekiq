@@ -21,8 +21,9 @@ GEMFILE="$APP_DIR/Gemfile"
 SIDEKIQ="sidekiq"
 APP_ENV="production"
 BUNDLE="bundle"
+USER="deployer"
 
-START_CMD="$BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
+START_CMD="sudo -u cat $BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
 RETVAL=0
 
 
@@ -30,9 +31,8 @@ start() {
 
   status
   if [ $? -eq 1 ]; then
-
-    [ `id -u` == '0' ] || (echo "$SIDEKIQ runs as root only .."; exit 5)
     [ -d $APP_DIR ] || (echo "$APP_DIR not found!.. Exiting"; exit 6)
+    su $USER
     cd $APP_DIR
     echo "Starting $SIDEKIQ message processor .. "
     $START_CMD >> $LOG_FILE 2>&1 &
