@@ -18,9 +18,10 @@ LOG_FILE="$APP_DIR/log/sidekiq.log"
 PID_FILE="$APP_DIR/tmp/pids/sidekiq.pid"
 GEMFILE="$APP_DIR/Gemfile"
 SIDEKIQ="sidekiq"
-APP_ENV="production"
 BUNDLE="/usr/local/rvm/bin/ext_1.9.3_bundle"
 USER="deployer"
+
+source /etc/profile.d/rails_env.sh
 
 START_CMD="$BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
 RETVAL=0
