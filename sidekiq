@@ -1,8 +1,8 @@
-#!/bin/bash
-# sidekiq    Init script for Sidekiq
-# chkconfig: 345 100 75
-# processname: sidekiq
-# Description: Starts and Stops Sidekiq message processor.
+#!/bin/sh
+#
+# chkconfig:   - 90 10
+# description:  Sidekiq Message Processor
+# processname:  sidekiq
 #
 # User-specified exit parameters used in this script:
 #
