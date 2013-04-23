@@ -10,20 +10,16 @@
 # Exit Code 6 - Directory not found
 
 
-#Variable Set
-APP="beyondalpha"
+# Variable Set
 APP_DIR="/home/deployer/apps/beyondalpha/current"
 APP_CONFIG="${APP_DIR}/config"
 LOG_FILE="$APP_DIR/log/sidekiq.log"
 PID_FILE="$APP_DIR/tmp/pids/sidekiq.pid"
-GEMFILE="$APP_DIR/Gemfile"
 SIDEKIQ="sidekiq"
-BUNDLE="/usr/local/rvm/bin/ext_1.9.3_bundle"
 USER="deployer"
 
 source /etc/profile.d/rails_env.sh
 
-START_CMD="$BUNDLE exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml"
 RETVAL=0
 
 
@@ -34,63 +30,63 @@ start() {
     [ -d $APP_DIR ] || (echo "$APP_DIR not found!.. Exiting"; exit 6)
     cd $APP_DIR
     echo "Starting $SIDEKIQ message processor .. "
-    $START_CMD >> $LOG_FILE 2>&1 &
+    su - $USER -c "bash -c 'cd $APP_DIR && bundle exec $SIDEKIQ -C $APP_CONFIG/sidekiq.yml'" >> $LOG_FILE 2>&1 &
     RETVAL=$?
-    #Sleeping for 8 seconds for process to be precisely visible in process table - See status ()
-    sleep 8
-    [ $RETVAL -eq 0 ]
 
-    #Make sure of user:group of log/pid
-    chown $USER:staff $LOG_FILE
-    chown $USER:staff $PID_FILE
+    if [ $RETVAL -eq 0 ]; then
+      # Sleeping for 12 seconds for process to be precisely visible in process table - See status ()
+      sleep 12
+
+      # Make sure of user:group of log/pid
+      chown $USER:staff $LOG_FILE
+      chown $USER:staff $PID_FILE
+    else
+      echo "$SIDEKIQ message processor failed to start .."
+    fi
 
     return $RETVAL
   else
-    echo "$SIDEKIQ message processor is already running .. "
+    echo "$SIDEKIQ message processor is already running .."
   fi
-
 
 }
 
 stop() {
-
-    echo "Stopping $SIDEKIQ message processor .."
-    SIG="INT"
-    kill -$SIG `cat  $PID_FILE`
-    RETVAL=$?
-    [ $RETVAL -eq 0 ]
-    return $RETVAL
+  echo "Stopping $SIDEKIQ message processor .."
+  SIG="INT"
+  kill -$SIG `cat  $PID_FILE`
+  RETVAL=$?
+  return $RETVAL
 }
 
 
 status() {
-
   ps -ef | grep 'sidekiq [0-9].[0-9].[0-9]' | grep -v grep
   return $?
 }
 
 
 case "$1" in
-    start)
-        start
-        ;;
-    stop)
-        stop
-        ;;
-    status)
-        status
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status
 
-        if [ $? -eq 0 ]; then
-             echo "$SIDEKIQ message processor is running .."
-             RETVAL=0
-         else
-             echo "$SIDEKIQ message processor is stopped .."
-             RETVAL=1
-         fi
-        ;;
-    *)
-        echo "Usage: $0 {start|stop|status}"
-        exit 0
-        ;;
+    if [ $? -eq 0 ]; then
+      echo "$SIDEKIQ message processor is running .."
+      RETVAL=0
+    else
+      echo "$SIDEKIQ message processor is stopped .."
+      RETVAL=1
+    fi
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status}"
+    exit 0
+    ;;
 esac
 exit $RETVAL
