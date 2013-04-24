@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# add profile.d entry for rails environment variable
+echo "export RAILS_ENV=production" > /etc/profile.d/rails_env.sh
+
 # install and setup redis
 wget http://redis.googlecode.com/files/redis-2.6.12.tar.gz
 tar xzf redis-2.6.12.tar.gz
